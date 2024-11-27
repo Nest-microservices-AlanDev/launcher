@@ -19,8 +19,6 @@ services:
 
   products-ms:
     build: ./products-ms
-    ports:
-      - 3001:3001
     volumes:
       - ./products-ms/src:/usr/src/app/src
     command: npm run start:dev
@@ -57,14 +55,27 @@ services:
   payments-ms:
     build: ./payments-ms
     ports:
-      - ${PAUMENTS_MICROSERVICE_PORT}:${PAUMENTS_MICROSERVICE_PORT}
+      - ${PAYMENTS_MICROSERVICE_PORT}:3004
     volumes:
       - ./payments-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=${PAUMENTS_MICROSERVICE_PORT}
+      - PORT=${PAYMENTS_MICROSERVICE_PORT}
       - NATS_SERVERS=nats://nats-server:4222
       - STRIPE_SECRET=${STRIPE_SECRET}
-      - STRIIPE_SUCCESS_URL=${STRIIPE_SUCCESS_URL}
-      - STRIIPE_CANCEL_URL=${STRIIPE_CANCEL_URL}
-      - STRIPE_ENDPOINTSECRET=${STRIPE_ENDPOINTSECRET} 
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
+      - STRIPE_ENDPOINTSECRET=${STRIPE_ENDPOINTSECRET}
+
+  auth-ms:
+    build: ./auth-ms
+    ports:
+      - ${AUTH_MICROSERVICE_PORT}:${AUTH_MICROSERVICE_PORT}
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3005
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
