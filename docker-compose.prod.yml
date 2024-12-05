@@ -10,7 +10,7 @@ services:
     build:
       context: ./client-gateway
       dockerfile: dockerfile.prod
-    image: client-gateway-prod
+    image: northamerica-south1-docker.pkg.dev/microservices-tienda-443601/image-registry/client-gateway
     ports:
       - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
     # volumes:
@@ -20,26 +20,26 @@ services:
       - NATS_SERVERS=nats://nats-server:4222
 
   products-ms:
-    build: 
-     context: ./products-ms
-     dockerfile: dockerfile.prod
-    image: products-microservice
+    build:
+      context: ./products-ms
+      dockerfile: dockerfile.prod
+    image: northamerica-south1-docker.pkg.dev/microservices-tienda-443601/image-registry/products-ms
     environment:
       - PORT=3001
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=file:./dev.db
 
   orders-ms:
-    build: 
-     context: ./orders-ms
-     dockerfile: dockerfile.prod
-     args: 
-      - ORDERS_DATABASEURL=${ORDERS_DATABASEURL}
-    image: orders-microservice
+    build:
+      context: ./orders-ms
+      dockerfile: dockerfile.prod
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+    image: northamerica-south1-docker.pkg.dev/microservices-tienda-443601/image-registry/orders-ms
     environment:
       - PORT=3000
       - NATS_SERVERS=nats://nats-server:4222
-      - DATABASE_URL=${ORDERS_DATABASEURL}
+      - DATABASE_URL=${DATABASE_URL}
 
   # orders-db:
   #   container_name: orders_database
@@ -55,11 +55,12 @@ services:
   #     - POSTGRES_DB=ordersdb
 
   payments-ms:
-    build: 
-     context: ./payments-ms
-     dockerfile: dockerfile.prod
+    build:
+      context: ./payments-ms
+      dockerfile: dockerfile.prod
+    image: northamerica-south1-docker.pkg.dev/microservices-tienda-443601/image-registry/payments-ms
     volumes:
-    - ./products-ms/database:/usr/src/app/database
+      - ./products-ms/database:/usr/src/app/database
     ports:
       - ${PAYMENTS_MICROSERVICE_PORT}:3004
     environment:
@@ -74,7 +75,7 @@ services:
     build:
       context: ./auth-ms
       dockerfile: dockerfile.prod
-    image: auth-microservice
+    image: northamerica-south1-docker.pkg.dev/microservices-tienda-443601/image-registry/auth-ms
     environment:
       - PORT=3005
       - NATS_SERVERS=nats://nats-server:4222
